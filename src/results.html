@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Результаты опроса | Семья для меня — это...</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, 'Segoe UI', sans-serif;
+            background: linear-gradient(145deg, #0a0f1f 0%, #0f1425 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1300px; margin: 0 auto; }
+        .header-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #c084fc, #60a5fa, #f472b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .question-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 40px;
+            padding: 1rem 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .question-text { font-size: 1.4rem; font-weight: 700; color: #f1f5f9; }
+        .cloud-container {
+            background: rgba(5, 10, 25, 0.4);
+            border-radius: 60px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .cloud-field {
+            position: relative;
+            width: 100%;
+            height: 550px;
+            background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.08), rgba(0,0,0,0.3));
+            border-radius: 50%;
+            overflow: visible;
+            margin: 0 auto;
+        }
+        .answer-word {
+            position: absolute;
+            cursor: default;
+            display: inline-block;
+            white-space: nowrap;
+            font-weight: 700;
+            text-align: center;
+            z-index: 10;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease;
+        }
+        .answer-word.horizontal { writing-mode: horizontal-tb; }
+        .answer-word.vertical { writing-mode: vertical-rl; text-orientation: mixed; }
+        .answer-word.diag-left { writing-mode: horizontal-tb; transform: rotate(-8deg); }
+        .answer-word.diag-right { writing-mode: horizontal-tb; transform: rotate(8deg); }
+        .answer-word.diag-steep { writing-mode: vertical-lr; transform: rotate(4deg); }
+        .word-micro { font-size: 0.7rem; }
+        .word-tiny { font-size: 0.85rem; }
+        .word-small { font-size: 1rem; }
+        .word-medium { font-size: 1.2rem; }
+        .word-large { font-size: 1.6rem; font-weight: 700; }
+        .word-xlarge { font-size: 2rem; font-weight: 700; }
+        .word-xxlarge { font-size: 2.5rem; font-weight: 800; }
+        .word-xxxlarge { font-size: 3rem; font-weight: 800; letter-spacing: -0.02em; }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 10px 20px;
+            border-radius: 40px;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.8rem; font-weight: 800; color: #facc15; }
+        .stat-label { font-size: 0.7rem; color: #94a3b8; }
+        .nav-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            background: rgba(30, 41, 59, 0.8);
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .nav-link:hover { background: #1e293b; }
+        .empty-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #6c7a91;
+            text-align: center;
+        }
+        footer { text-align: center; margin-top: 20px; font-size: 0.7rem; color: #4a5568; }
+        @media (max-width: 700px) {
+            .cloud-field { height: 450px; }
+            .question-text { font-size: 1.2rem; }
+            .word-xxxlarge { font-size: 2rem; }
+            .answer-word { white-space: normal; word-break: keep-all; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-card">
+        <h1>📊 Рейтинг ответов</h1>
+        <div class="question-box">
+            <div class="question-text" id="questionText">Загрузка...</div>
+        </div>
+    </div>
+    <div class="cloud-container">
+        <div id="cloudField" class="cloud-field"><div class="empty-state">Загрузка...</div></div>
+        <div class="stats">
+            <div class="stat-card"><div class="stat-value" id="totalVotes">0</div><div class="stat-label">всего голосов</div></div>
+            <div class="stat-card"><div class="stat-value" id="uniqueAnswers">0</div><div class="stat-label">вариантов</div></div>
+        </div>
+    </div>
+    <div class="nav-buttons">
+        <a href="poll.html" class="nav-link">📝 Проголосовать</a>
+        <a href="admin.html" class="nav-link">⚙️ Администрирование</a>
+    </div>
+    <footer>Размер слова = популярность ответа</footer>
+</div>
+
+<script>
+    const API_URL = window.location.origin + '/api';
+    const colorPalette = ["#fca5a5", "#fdba74", "#fde047", "#86efac", "#93c5fd", "#c4b5fd", "#f9a8d4", "#99f6e4", "#d8b4fe", "#a78bfa"];
+
+    async function fetchData() {
+        const response = await fetch(`${API_URL}/data`);
+        return await response.json();
+    }
+
+    function getSizeClass(count, maxVotes) {
+        if (maxVotes === 0) return "word-medium";
+        let ratio = count / maxVotes;
+        if (ratio < 0.15) return "word-micro";
+        if (ratio < 0.3) return "word-tiny";
+        if (ratio < 0.5) return "word-small";
+        if (ratio < 0.7) return "word-medium";
+        if (ratio < 0.85) return "word-large";
+        if (ratio < 0.95) return "word-xlarge";
+        if (ratio < 1) return "word-xxlarge";
+        return "word-xxxlarge";
+    }
+
+    function getRandomOrientation() {
+        const variants = ["horizontal", "vertical", "diag-left", "diag-right", "diag-steep"];
+        return variants[Math.floor(Math.random() * variants.length)];
+    }
+
+    async function renderCloud() {
+        const container = document.getElementById("cloudField");
+        if (!container) return;
+    
+        const data = await fetchData();
+        const entries = Object.entries(data.answers);
+        const maxVotes = entries.length > 0 ? Math.max(...entries.map(e => e[1])) : 0;
+        
+        document.getElementById("questionText").innerHTML = escapeHtml(data.question);
+        document.getElementById("totalVotes").innerHTML = entries.reduce((sum, e) => sum + e[1], 0);
+        document.getElementById("uniqueAnswers").innerHTML = entries.length;
+    
+        if (entries.length === 0) {
+            container.innerHTML = '<div class="empty-state">✨ Нет данных для отображения</div>';
+            return;
+        }
+    
+        const fieldWidth = container.clientWidth;
+        const fieldHeight = container.clientHeight;
+        
+        if (fieldWidth === 0 || fieldHeight === 0) {
+            requestAnimationFrame(() => renderCloud());
+            return;
+        }
+        
+        const centerX = fieldWidth / 2;
+        const centerY = fieldHeight / 2;
+        
+        const items = [];
+        for (let i = 0; i < entries.length; i++) {
+            const [text, count] = entries[i];
+            const sizeClass = getSizeClass(count, maxVotes);
+            const orientation = getRandomOrientation();
+            const tempSpan = document.createElement("span");
+            tempSpan.className = `answer-word ${sizeClass} ${orientation}`;
+            tempSpan.style.position = "absolute";
+            tempSpan.style.left = "-9999px";
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.whiteSpace = "nowrap";
+            tempSpan.innerText = text;
+            document.body.appendChild(tempSpan);
+            const width = tempSpan.offsetWidth;
+            const height = tempSpan.offsetHeight;
+            document.body.removeChild(tempSpan);
+            items.push({
+                text, count, sizeClass, orientation,
+                width: width + 40, height: height + 30,
+                color: colorPalette[i % colorPalette.length]
+            });
+        }
+        
+        let maxWidth = 0;
+        for (let item of items) maxWidth = Math.max(maxWidth, item.width);
+        const step = Math.max(maxWidth + 50, 140);
+        const maxRadius = Math.min(fieldWidth, fieldHeight) * 0.42;
+        
+        container.innerHTML = "";
+        const occupiedCells = new Set();
+        const cellSize = 32;
+        
+        function getCells(x, y, item) {
+            const isVertical = item.orientation === "vertical" || item.orientation === "diag-steep";
+            const letters = item.text.split("");
+            const cells = [];
+            if (isVertical) {
+                const letterHeight = item.height / letters.length;
+                const startY = y - item.height / 2;
+                for (let i = 0; i < letters.length; i++) {
+                    const letterY = startY + i * letterHeight + letterHeight / 2;
+                    const col = Math.floor(x / cellSize);
+                    const row = Math.floor(letterY / cellSize);
+                    cells.push(`${row},${col}`);
+                }
+            } else {
+                const letterWidth = item.width / letters.length;
+                const startX = x - item.width / 2;
+                for (let i = 0; i < letters.length; i++) {
+                    const letterX = startX + i * letterWidth + letterWidth / 2;
+                    const col = Math.floor(letterX / cellSize);
+                    const row = Math.floor(y / cellSize);
+                    cells.push(`${row},${col}`);
+                }
+            }
+            return cells;
+        }
+        
+        function canPlace(x, y, item) {
+            const cells = getCells(x, y, item);
+            for (let cell of cells) if (occupiedCells.has(cell)) return false;
+            return true;
+        }
+        
+        function markCells(x, y, item) {
+            const cells = getCells(x, y, item);
+            cells.forEach(cell => occupiedCells.add(cell));
+        }
+        
+        // Лидер в центре
+        const leader = items[0];
+        const leaderDiv = document.createElement("div");
+        leaderDiv.className = `answer-word ${leader.sizeClass} ${leader.orientation}`;
+        leaderDiv.innerText = leader.text;
+        leaderDiv.style.left = `${centerX}px`;
+        leaderDiv.style.top = `${centerY}px`;
+        leaderDiv.style.transform = `translate(-50%, -50%)`;
+        leaderDiv.style.color = leader.color;
+        leaderDiv.style.pointerEvents = "none";
+        container.appendChild(leaderDiv);
+        markCells(centerX, centerY, leader);
+        
+        // Остальные
+        for (let idx = 1; idx < items.length; idx++) {
+            const item = items[idx];
+            let radius = step * idx;
+            radius = Math.min(radius, maxRadius);
+            let placed = false;
+            for (let attempt = 0; attempt < 400; attempt++) {
+                const angle = (360 / (items.length - 1)) * (idx - 1) + attempt * 6;
+                const rad = angle * Math.PI / 180;
+                let x = centerX + radius * Math.cos(rad);
+                let y = centerY + radius * Math.sin(rad);
+                x = Math.min(fieldWidth - 80, Math.max(80, x));
+                y = Math.min(fieldHeight - 80, Math.max(80, y));
+                if (canPlace(x, y, item)) {
+                    const wordDiv = document.createElement("div");
+                    wordDiv.className = `answer-word ${item.sizeClass} ${item.orientation}`;
+                    wordDiv.innerText = item.text;
+                    wordDiv.style.left = `${x}px`;
+                    wordDiv.style.top = `${y}px`;
+                    wordDiv.style.transform = `translate(-50%, -50%)`;
+                    wordDiv.style.color = item.color;
+                    wordDiv.style.pointerEvents = "none";
+                    container.appendChild(wordDiv);
+                    markCells(x, y, item);
+                    placed = true;
+                    break;
+                }
+            }
+            if (!placed) {
+                let fallbackRadius = radius + 60;
+                let angle = (360 / (items.length - 1)) * (idx - 1);
+                let rad = angle * Math.PI / 180;
+                let x = centerX + fallbackRadius * Math.cos(rad);
+                let y = centerY + fallbackRadius * Math.sin(rad);
+                x = Math.min(fieldWidth - 80, Math.max(80, x));
+                y = Math.min(fieldHeight - 80, Math.max(80, y));
+                const wordDiv = document.createElement("div");
+                wordDiv.className = `answer-word ${item.sizeClass} ${item.orientation}`;
+                wordDiv.innerText = item.text;
+                wordDiv.style.left = `${x}px`;
+                wordDiv.style.top = `${y}px`;
+                wordDiv.style.transform = `translate(-50%, -50%)`;
+                wordDiv.style.color = item.color;
+                wordDiv.style.pointerEvents = "none";
+                container.appendChild(wordDiv);
+                markCells(x, y, item);
+            }
+        }
+        
+        const centerDot = document.createElement("div");
+        centerDot.style.position = "absolute";
+        centerDot.style.left = `${centerX}px`;
+        centerDot.style.top = `${centerY}px`;
+        centerDot.style.width = "12px";
+        centerDot.style.height = "12px";
+        centerDot.style.backgroundColor = "#fbbf24";
+        centerDot.style.borderRadius = "50%";
+        centerDot.style.transform = "translate(-50%, -50%)";
+        centerDot.style.boxShadow = "0 0 16px #fbbf24";
+        centerDot.style.pointerEvents = "none";
+        container.appendChild(centerDot);
+        
+        for (let r = step; r <= maxRadius + step; r += step) {
+            const ring = document.createElement("div");
+            ring.style.position = "absolute";
+            ring.style.left = `${centerX - r}px`;
+            ring.style.top = `${centerY - r}px`;
+            ring.style.width = `${r * 2}px`;
+            ring.style.height = `${r * 2}px`;
+            ring.style.borderRadius = "50%";
+            ring.style.border = "1px dashed rgba(255,255,255,0.1)";
+            ring.style.pointerEvents = "none";
+            container.appendChild(ring);
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+    }
+
+    renderCloud();
+    setInterval(renderCloud, 5000);
+    window.addEventListener('resize', () => setTimeout(renderCloud, 150));
+</script>
+</body>
+</html>
