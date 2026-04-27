@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Опрос | Семья для меня — это...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #0a0f1f 0%, #0f1425 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #c084fc, #60a5fa, #f472b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .question-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 40px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 1.5rem 0;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255,255,255,0.05);
+            padding: 14px 20px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .option-item:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateX(4px);
+        }
+
+        .option-radio {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #8b5cf6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-radio.selected {
+            background: #8b5cf6;
+            box-shadow: 0 0 8px #8b5cf6;
+        }
+
+        .option-radio.selected::after {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #e2e8f0;
+            flex: 1;
+        }
+
+        .add-option {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        input {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 1rem;
+            border: 2px solid #334155;
+            border-radius: 60px;
+            outline: none;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        input:focus {
+            border-color: #8b5cf6;
+        }
+
+        button {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: scale(0.97);
+            filter: brightness(1.05);
+        }
+
+        button.secondary {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid #475569;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            background: rgba(30, 41, 59, 0.8);
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #1e293b;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: #cbd5e1;
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            z-index: 999;
+            backdrop-filter: blur(12px);
+            border: 1px solid #8b5cf6;
+            animation: fadeOut 2s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        .loading {
+            text-align: center;
+            color: #94a3b8;
+            padding: 20px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #4a5568;
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 1.2rem; }
+            .question-text { font-size: 1.3rem; }
+            .add-option { flex-direction: column; }
+            .add-option button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>📝 Опрос</h1>
+        <div class="question-box">
+            <div class="question-text" id="questionText">Загрузка...</div>
+        </div>
+        <div id="optionsList" class="options-list">
+            <div class="loading">Загрузка вариантов...</div>
+        </div>
+        <div class="add-option">
+            <input type="text" id="newOptionInput" placeholder="Свой вариант..." autocomplete="off">
+            <button id="addAndVoteBtn">➕ Добавить и проголосовать</button>
+        </div>
+        <div class="nav-buttons">
+            <button id="voteSelectedBtn" class="secondary">🗳️ Проголосовать за выбранное</button>
+            <a href="results.html" class="nav-link">📊 Результаты</a>
+            <a href="admin.html" class="nav-link">⚙️ Администрирование</a>
+        </div>
+        <footer>Выберите вариант или добавьте свой</footer>
+    </div>
+</div>
+
+<script>
+    const API_URL = window.location.origin + '/api';
+    let selectedOption = null;
+    let currentData = null;
+
+    async function fetchData() {
+        const response = await fetch(`${API_URL}/data`);
+        return await response.json();
+    }
+
+    async function sendVote(answer) {
+        const response = await fetch(`${API_URL}/vote`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answer: answer })
+        });
+        return await response.json();
+    }
+
+    async function sendNewAnswer(answer) {
+        const response = await fetch(`${API_URL}/add_answer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answer: answer })
+        });
+        return await response.json();
+    }
+
+    function showToast(message) {
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function escapeAttr(str) {
+        if (!str) return "";
+        return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    window.selectOption = function(value) {
+        document.querySelectorAll('.option-radio').forEach(el => el.classList.remove('selected'));
+        const radio = document.getElementById('radio_' + value.replace(/'/g, "\\'"));
+        if (radio) radio.classList.add('selected');
+        selectedOption = value;
+    };
+
+    async function addAndVote() {
+        const input = document.getElementById('newOptionInput');
+        const newValue = input.value.trim();
+        if (newValue === "") {
+            alert("Введите вариант ответа!");
+            return;
+        }
+        
+        try {
+            const result = await sendNewAnswer(newValue);
+            if (result.error) {
+                alert(result.error);
+            } else {
+                await renderOptions();
+                selectOption(newValue);
+                input.value = "";
+                showToast(`✨ Добавлен вариант: "${newValue}"`);
+            }
+        } catch(e) {
+            alert("Ошибка при добавлении варианта");
+        }
+    }
+
+    async function voteForSelected() {
+        if (!selectedOption) {
+            alert("Выберите вариант ответа!");
+            return;
+        }
+        
+        try {
+            await sendVote(selectedOption);
+            showToast(`🗳️ Голос за "${selectedOption}" принят!`);
+            selectedOption = null;
+            document.querySelectorAll('.option-radio').forEach(el => el.classList.remove('selected'));
+            await renderOptions();
+        } catch(e) {
+            alert("Ошибка при голосовании");
+        }
+    }
+
+    async function renderOptions() {
+        const data = await fetchData();
+        currentData = data;
+        const entries = Object.entries(data.answers);
+        
+        document.getElementById("questionText").innerHTML = escapeHtml(data.question);
+        
+        const optionsContainer = document.getElementById("optionsList");
+        if (entries.length === 0) {
+            optionsContainer.innerHTML = '<div class="loading">✨ Нет вариантов для голосования</div>';
+        } else {
+            optionsContainer.innerHTML = entries.map(([text, count]) => `
+                <div class="option-item" data-value="${escapeAttr(text)}" onclick="selectOption('${escapeAttr(text)}')">
+                    <div class="option-radio" id="radio_${escapeAttr(text)}"></div>
+                    <span class="option-text">${escapeHtml(text)}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    async function init() {
+        await renderOptions();
+        
+        document.getElementById('addAndVoteBtn').addEventListener('click', addAndVote);
+        document.getElementById('voteSelectedBtn').addEventListener('click', voteForSelected);
+        document.getElementById('newOptionInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addAndVote();
+        });
+    }
+
+    init();
+</script>
+</body>
+</html>
