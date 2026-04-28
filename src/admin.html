@@ -53,7 +53,7 @@
             text-align: center;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 16px 20px;
             font-size: 1.1rem;
@@ -65,7 +65,7 @@
             margin-bottom: 16px;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: #8b5cf6;
         }
 
@@ -157,6 +157,12 @@
             align-items: center;
             gap: 8px;
         }
+        
+        .answer-tag.protected {
+            background: rgba(75, 85, 99, 0.3);
+            border-color: #6b7280;
+            color: #9ca3af;
+        }
 
         .answer-tag button {
             background: none;
@@ -166,10 +172,76 @@
             height: 24px;
             color: #f87171;
         }
+        
+        .answer-tag button:disabled {
+            color: #4b5563;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
 
-        .answer-tag button:hover {
+        .answer-tag button:hover:not(:disabled) {
             transform: none;
             color: #ef4444;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            margin: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #334155;
+            transition: 0.3s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #8b5cf6;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            padding: 15px 20px;
+            border-radius: 60px;
+            margin-bottom: 10px;
+        }
+        .setting-label {
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+        .setting-desc {
+            font-size: 0.7rem;
+            color: #6c7a91;
+            margin-top: 4px;
         }
 
         .nav-buttons {
@@ -250,11 +322,25 @@
 
 <script>
     const API_URL = window.location.origin + '/api';
-    const ADMIN_PASSWORD = "mashamedvedska";
+    const ADMIN_PASSWORD = "admin123";
 
     // Функции работы с API
     async function fetchData() {
         const response = await fetch(`${API_URL}/data`);
+        return await response.json();
+    }
+    
+    async function fetchSettings() {
+        const response = await fetch(`${API_URL}/settings`);
+        return await response.json();
+    }
+
+    async function updateSettings(settings) {
+        const response = await fetch(`${API_URL}/settings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(settings)
+        });
         return await response.json();
     }
 
@@ -354,7 +440,7 @@
         return password === ADMIN_PASSWORD;
     }
 
-    function showToast(message) {
+    function showToast(message, color = null) {
         const toast = document.createElement("div");
         toast.className = "toast";
         toast.innerText = message;
@@ -415,11 +501,28 @@
     // Основной контент админки
     async function renderAdminContent() {
         const data = await fetchData();
+        const settings = await fetchSettings();
         const entries = Object.entries(data.answers);
+        
+        const allowCustom = settings.allow_custom_answers === 1 || settings.allow_custom_answers === "1";
         
         return `
             <div class="card">
                 <h1>⚙️ Администрирование</h1>
+                
+                <div class="admin-section">
+                    <div class="admin-title">⚙️ Настройки опроса</div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">✏️ Разрешить свой вариант ответа</div>
+                            <div class="setting-desc">Пользователи смогут вводить свои варианты на странице опроса</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="allowCustomToggle" ${allowCustom ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
                 
                 <div class="admin-section">
                     <div class="admin-title">📝 Редактирование вопроса</div>
@@ -477,6 +580,21 @@
     }
 
     async function attachAdminHandlers() {
+        // Toggle для разрешения своих вариантов
+        const toggle = document.getElementById('allowCustomToggle');
+        if (toggle) {
+            toggle.addEventListener('change', async (e) => {
+                const newValue = e.target.checked ? 1 : 0;
+                try {
+                    await updateSettings({ allow_custom_answers: newValue });
+                    showToast(e.target.checked ? "🔓 Свой вариант разрешён" : "🔒 Свой вариант запрещён");
+                } catch (err) {
+                    showToast("❌ Ошибка сохранения настройки");
+                    e.target.checked = !e.target.checked;
+                }
+            });
+        }
+        
         document.getElementById('saveQuestionBtn')?.addEventListener('click', async () => {
             const input = document.getElementById('questionInput');
             const newQuestion = input.value.trim();
