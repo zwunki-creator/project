@@ -117,11 +117,7 @@ def handle_settings():
     
     # POST — обновление настроек (требует пароль)
     data = request.json
-    # Проверка пароля администратора
-    password = data.get('password', '')
-    if hashlib.sha256(password.encode()).hexdigest() != ADMIN_PASSWORD_HASH:
-        return jsonify({"error": "Неверный пароль"}), 403
-    
+       
     # Обновляем настройки
     new_settings = {}
     if 'allow_custom_answers' in data:
