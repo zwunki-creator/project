@@ -1,15 +1,40 @@
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 import os
+import sys
 
 app = Flask(__name__)
 CORS(app)
 
 DATABASE = 'poll.db'
 
+def init_db_app():
+    """Гарантированно создаёт таблицы, если они не существуют"""
+    try:
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS poll_data (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                question TEXT NOT NULL,
+                answer TEXT NOT NULL,
+                votes INTEGER DEFAULT 1
+            )
+        ''')
+        cursor.execute('''
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_answer ON poll_data(answer)
+        ''')
+        conn.commit()
+        conn.close()
+        print("init_db_app: База данных инициализирована", file=sys.stderr)
+        return True
+    except Exception as e:
+        print(f"init_db_app: Ошибка инициализации БД: {e}", file=sys.stderr)
+        return False
+
 def init_db():
-    """Инициализация базы данных"""
+    """Инициализация базы данных (первый запуск)"""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute('''
@@ -23,25 +48,29 @@ def init_db():
     cursor.execute('''
         CREATE UNIQUE INDEX IF NOT EXISTS idx_answer ON poll_data(answer)
     ''')
+    
+    # Проверяем, есть ли данные
+    cursor.execute("SELECT COUNT(*) FROM poll_data")
+    count = cursor.fetchone()[0]
+    
+    if count == 0:
+        default_answers = ["Любовь", "Поддержка", "Забота", "Уважение", "Опора", "Уют", "Понимание", "Тепло"]
+        for answer in default_answers:
+            cursor.execute("INSERT INTO poll_data (question, answer, votes) VALUES (?, ?, 1)", 
+                          ("Что для вас семья?", answer))
+    
     conn.commit()
     conn.close()
-
-# ==== ВАЖНО: ВЫЗЫВАЕМ ИНИЦИАЛИЗАЦИЮ БАЗЫ ДАННЫХ ПРИ ЗАПУСКЕ ====
-init_db()
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
 
-# ==== ПЕРЕНАПРАВЛЕНИЕ С КОРНЯ НА СТРАНИЦУ РЕЗУЛЬТАТОВ ====
-@app.route('/')
-def index():
-    return redirect('/results.html')
-
 @app.route('/api/init', methods=['GET'])
 def init_poll():
-    """Инициализация опроса (только если база пуста)"""
+    """Инициализация опроса (при первом запуске)"""
+    init_db_app()
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM poll_data")
@@ -58,6 +87,7 @@ def init_poll():
 @app.route('/api/data', methods=['GET'])
 def get_data():
     """Получить все данные опроса"""
+    init_db_app()
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT question, answer, votes FROM poll_data")
@@ -72,6 +102,7 @@ def get_data():
 @app.route('/api/vote', methods=['POST'])
 def vote():
     """Проголосовать за ответ"""
+    init_db_app()
     data = request.json
     answer = data.get('answer', '').strip()
     if not answer:
@@ -92,6 +123,7 @@ def vote():
 @app.route('/api/add_answer', methods=['POST'])
 def add_answer():
     """Добавить новый вариант ответа"""
+    init_db_app()
     data = request.json
     answer = data.get('answer', '').strip()
     if not answer:
@@ -160,5 +192,5 @@ def admin_page():
         return f.read()
 
 if __name__ == '__main__':
-    # Этот блок не выполняется на сервере, поэтому мы вызвали init_db() выше
+    init_db()
     app.run(debug=True)
