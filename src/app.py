@@ -9,7 +9,7 @@ CORS(app)
 
 # Конфигурация
 DATABASE = '/tmp/poll.db'
-ADMIN_PASSWORD_HASH = hashlib.sha256("admin123".encode()).hexdigest()
+ADMIN_PASSWORD_HASH = hashlib.sha256("mashamedvedska".encode()).hexdigest()
 
 # ==================== РАБОТА С БАЗОЙ ДАННЫХ ====================
 
