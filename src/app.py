@@ -117,7 +117,7 @@ def handle_settings():
     
     # POST — обновление настроек (требует пароль)
     data = request.json
-       
+        
     # Обновляем настройки
     new_settings = {}
     if 'allow_custom_answers' in data:
