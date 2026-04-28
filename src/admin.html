@@ -3,19 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Администрирование | Вход</title>
+    <title>Администрирование | Семья для меня — это...</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: system-ui, 'Segoe UI', 'Helvetica Neue', sans-serif;
             background: linear-gradient(145deg, #0a0f1f 0%, #0f1425 100%);
             min-height: 100vh;
+            padding: 40px 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
         }
-        .container { max-width: 500px; width: 100%; }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
         .card {
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(12px);
@@ -24,34 +35,41 @@
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 25px 45px rgba(0,0,0,0.3);
         }
+
         h1 {
             font-size: 1.8rem;
             background: linear-gradient(135deg, #c084fc, #60a5fa, #f472b6);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-align: center;
             margin-bottom: 1rem;
+            text-align: center;
         }
+
         .login-title {
             font-size: 1.3rem;
             color: #facc15;
-            text-align: center;
             margin-bottom: 1.5rem;
+            text-align: center;
         }
+
         input {
             width: 100%;
-            padding: 14px 20px;
-            font-size: 1rem;
+            padding: 16px 20px;
+            font-size: 1.1rem;
             border: 2px solid #334155;
             border-radius: 60px;
+            outline: none;
             background: #0f172a;
             color: #e2e8f0;
             margin-bottom: 16px;
         }
-        input:focus { border-color: #8b5cf6; outline: none; }
+
+        input:focus {
+            border-color: #8b5cf6;
+        }
+
         button {
-            width: 100%;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             border: none;
             padding: 14px 28px;
@@ -62,7 +80,25 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        button:hover { transform: scale(0.97); filter: brightness(1.05); }
+
+        button:hover {
+            transform: scale(0.97);
+            filter: brightness(1.05);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+        }
+
+        button.secondary {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid #475569;
+        }
+
+        button.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
         .error {
             background: rgba(220, 38, 38, 0.2);
             border: 1px solid #ef4444;
@@ -71,39 +107,71 @@
             border-radius: 40px;
             text-align: center;
             margin-bottom: 16px;
+            font-size: 0.9rem;
         }
+
         .admin-section {
             margin-top: 24px;
             padding-top: 24px;
             border-top: 1px solid rgba(255,255,255,0.1);
         }
+
         .admin-title {
             font-size: 1.2rem;
             font-weight: 600;
             color: #facc15;
             margin-bottom: 16px;
         }
-        .add-option { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
-        .add-option input { flex: 1; margin-bottom: 0; }
-        .add-option button { width: auto; }
-        .answer-manager { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+
+        .add-option {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .add-option input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .add-option button {
+            width: auto;
+        }
+
+        .answer-manager {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0;
+        }
+
         .answer-tag {
             background: rgba(139, 92, 246, 0.2);
             border: 1px solid #8b5cf6;
             color: #c4b5fd;
             padding: 8px 16px;
             border-radius: 40px;
+            font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
+
         .answer-tag button {
             background: none;
             padding: 0;
+            font-size: 1.2rem;
             width: 24px;
             height: 24px;
             color: #f87171;
         }
+
+        .answer-tag button:hover {
+            transform: none;
+            color: #ef4444;
+        }
+
         .nav-buttons {
             display: flex;
             gap: 16px;
@@ -111,6 +179,7 @@
             margin-top: 24px;
             flex-wrap: wrap;
         }
+
         .nav-link {
             background: rgba(30, 41, 59, 0.8);
             color: #e2e8f0;
@@ -120,13 +189,18 @@
             font-size: 0.9rem;
             transition: 0.2s;
         }
-        .nav-link:hover { background: #1e293b; }
+
+        .nav-link:hover {
+            background: #1e293b;
+        }
+
         .logout-btn {
             background: rgba(30, 41, 59, 0.9);
             border: 1px solid #475569;
             width: 100%;
-            margin-top: 16px;
+            margin-top: 10px;
         }
+
         .toast {
             position: fixed;
             bottom: 25px;
@@ -143,85 +217,202 @@
             border: 1px solid #8b5cf6;
             animation: fadeOut 2s ease-out forwards;
         }
+
         @keyframes fadeOut {
             0% { opacity: 1; }
             70% { opacity: 1; }
             100% { opacity: 0; visibility: hidden; }
         }
-        .note { font-size: 0.7rem; color: #6c7a91; margin-top: 10px; }
-        @media (max-width: 600px) {
-            .card { padding: 1.2rem; }
-            .add-option { flex-direction: column; }
-            .add-option button { width: 100%; }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #4a5568;
+        }
+
+        .note {
+            font-size: 0.7rem;
+            color: #6c7a91;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
         }
     </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app" class="container"></div>
 
 <script>
     const API_URL = window.location.origin + '/api';
-    const ADMIN_PASSWORD = "mashamedvedska";  // ← Поменяйте пароль здесь
+    const ADMIN_PASSWORD = "mashamedvedska";
 
-    function checkAuth() { return sessionStorage.getItem("admin_auth") === "true"; }
-    function setAuth(authenticated) {
-        if (authenticated) sessionStorage.setItem("admin_auth", "true");
-        else sessionStorage.removeItem("admin_auth");
-    }
-    function logout() { setAuth(false); render(); showToast("🔓 Вы вышли из админ-режима"); }
-
+    // Функции работы с API
     async function fetchData() {
         const response = await fetch(`${API_URL}/data`);
         return await response.json();
     }
-    async function setQuestion(q) {
+
+    async function setQuestion(newQuestion) {
         const response = await fetch(`${API_URL}/set_question`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: q })
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: newQuestion })
         });
-        return await response.json();
-    }
-    async function addAnswer(a) {
-        const response = await fetch(`${API_URL}/add_answer`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ answer: a })
-        });
-        return await response.json();
-    }
-    async function removeAnswer(a) {
-        const response = await fetch(`${API_URL}/remove_answer`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ answer: a })
-        });
-        return await response.json();
-    }
-    async function resetRating() {
-        const response = await fetch(`${API_URL}/reset_rating`, { method: 'POST' });
         return await response.json();
     }
 
-    function showToast(msg, color) {
+    async function addAnswer(answer) {
+        const response = await fetch(`${API_URL}/add_answer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answer: answer })
+        });
+        return await response.json();
+    }
+
+    async function removeAnswer(answer) {
+        const response = await fetch(`${API_URL}/remove_answer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answer: answer })
+        });
+        return await response.json();
+    }
+
+    async function resetRating() {
+        const response = await fetch(`${API_URL}/reset_rating`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        return await response.json();
+    }
+
+    // Функция экспорта рейтинга в файл
+    async function exportRating() {
+        const data = await fetchData();
+        const entries = Object.entries(data.answers);
+        const totalVotes = entries.reduce((sum, e) => sum + e[1], 0);
+        
+        const timestamp = new Date().toLocaleString('ru-RU');
+        let content = `РЕЙТИНГ ОТВЕТОВ\n`;
+        content += `Дата: ${timestamp}\n`;
+        content += `Вопрос: ${data.question}\n`;
+        content += `Всего голосов: ${totalVotes}\n`;
+        content += `${'='.repeat(50)}\n\n`;
+        
+        entries.sort((a,b) => b[1] - a[1]).forEach(([text, count], idx) => {
+            content += `${idx + 1}. ${text} → ${count} ${getDeclension(count)}\n`;
+        });
+        
+        content += `\n${'='.repeat(50)}\n`;
+        content += `Сгенерировано автоматически`;
+        
+        const blob = new Blob([content], { type: 'text/plain; charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `rating_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showToast(`📁 Файл с рейтингом сохранён`, "#86efac");
+    }
+
+    function getDeclension(count) {
+        if (count % 10 === 1 && count % 100 !== 11) return "голос";
+        if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return "голоса";
+        return "голосов";
+    }
+
+    function checkAuth() {
+        return sessionStorage.getItem("admin_auth") === "true";
+    }
+
+    function setAuth(authenticated) {
+        if (authenticated) {
+            sessionStorage.setItem("admin_auth", "true");
+        } else {
+            sessionStorage.removeItem("admin_auth");
+        }
+    }
+
+    function logout() {
+        setAuth(false);
+        render();
+        showToast("🔓 Вы вышли из режима администрирования");
+    }
+
+    function verifyPassword(password) {
+        return password === ADMIN_PASSWORD;
+    }
+
+    function showToast(message) {
         const toast = document.createElement("div");
         toast.className = "toast";
-        toast.innerText = msg;
-        if (color) toast.style.borderColor = color;
+        toast.innerText = message;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 2000);
     }
 
     function escapeHtml(str) {
         if (!str) return "";
-        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
     }
 
-    window.removeAnswerItem = async function(answer) {
-        if (confirm(`Удалить вариант "${answer}"?`)) {
-            await removeAnswer(answer);
-            renderAdminContent();
-            showToast(`🗑️ Удалён вариант: "${answer}"`);
-        }
-    };
+    // Логин-форма
+    function renderLoginForm(errorMessage = "") {
+        return `
+            <div class="card">
+                <h1>⚙️ Администрирование</h1>
+                <div class="login-title">🔐 Вход в защищённую зону</div>
+                ${errorMessage ? `<div class="error">❌ ${errorMessage}</div>` : ''}
+                <input type="password" id="passwordInput" placeholder="Введите пароль" autocomplete="off">
+                <button id="loginBtn">Войти</button>
+                <div class="nav-buttons" style="margin-top: 20px;">
+                    <a href="results.html" class="nav-link">📊 Результаты</a>
+                    <a href="poll.html" class="nav-link">📝 Опрос</a>
+                </div>
+                <footer>Для доступа к управлению введите пароль</footer>
+            </div>
+        `;
+    }
 
+    function attachLoginHandler() {
+        const loginBtn = document.getElementById("loginBtn");
+        const passwordInput = document.getElementById("passwordInput");
+        
+        const tryLogin = () => {
+            const password = passwordInput.value;
+            if (verifyPassword(password)) {
+                setAuth(true);
+                render();
+                showToast("🔓 Доступ разрешён");
+            } else {
+                renderLoginForm("Неверный пароль");
+                attachLoginHandler();
+            }
+        };
+        
+        loginBtn?.addEventListener("click", tryLogin);
+        passwordInput?.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") tryLogin();
+        });
+    }
+
+    // Основной контент админки
     async function renderAdminContent() {
         const data = await fetchData();
         const entries = Object.entries(data.answers);
@@ -229,65 +420,119 @@
         return `
             <div class="card">
                 <h1>⚙️ Администрирование</h1>
+                
                 <div class="admin-section">
                     <div class="admin-title">📝 Редактирование вопроса</div>
                     <div class="add-option">
-                        <input type="text" id="questionInput" value="${escapeHtml(data.question)}" placeholder="Введите новый вопрос...">
+                        <input type="text" id="questionInput" value="${escapeHtml(data.question)}" placeholder="Введите новый вопрос..." autocomplete="off">
                         <button id="saveQuestionBtn">✏️ Сохранить</button>
                     </div>
                 </div>
+                
                 <div class="admin-section">
                     <div class="admin-title">➕ Добавить вариант ответа</div>
                     <div class="add-option">
-                        <input type="text" id="newAnswerInput" placeholder="Новый вариант...">
+                        <input type="text" id="newAnswerInput" placeholder="Новый вариант..." autocomplete="off">
                         <button id="addAnswerBtn">➕ Добавить</button>
                     </div>
                 </div>
+                
                 <div class="admin-section">
                     <div class="admin-title">🗑️ Управление вариантами</div>
                     <div id="answerManager" class="answer-manager">
                         ${entries.map(([text, count]) => `
                             <div class="answer-tag">
                                 ${escapeHtml(text)} (${count})
-                                <button onclick="window.removeAnswerItem('${escapeHtml(text).replace(/'/g, "\\'")}')">✕</button>
+                                <button onclick="window.removeAnswerItem('${escapeHtml(text).replace(/'/g, "\\'")}')" title="Удалить">✕</button>
                             </div>
                         `).join('')}
                     </div>
+                    ${entries.length === 0 ? '<div class="empty-state">✨ Нет вариантов ответов</div>' : ''}
                 </div>
+                
+                <div class="admin-section">
+                    <div class="admin-title">📊 Экспорт и управление</div>
+                    <div class="button-group">
+                        <button id="exportRatingBtn" class="success">📥 Выгрузить рейтинг (TXT)</button>
+                    </div>
+                </div>
+                
                 <div class="admin-section">
                     <div class="admin-title">🔄 Сброс рейтинга</div>
                     <button id="resetRatingBtn" class="danger">⚠️ Сбросить все голоса к 1</button>
                     <div class="note">Все ответы получат по 1 голосу. Рейтинг обнулится.</div>
                 </div>
+                
                 <div class="admin-section">
                     <button id="logoutBtn" class="logout-btn">🔓 Выйти из админ-режима</button>
                 </div>
+                
                 <div class="nav-buttons">
                     <a href="results.html" class="nav-link">📊 Результаты</a>
                     <a href="poll.html" class="nav-link">📝 Опрос</a>
                 </div>
-                <footer style="text-align:center; margin-top:20px; font-size:0.7rem; color:#4a5568;">Изменения сохраняются автоматически</footer>
+                <footer>Изменения сохраняются автоматически</footer>
             </div>
         `;
     }
 
-    function renderLoginForm(errorMessage = "") {
-        return `
-            <div class="container">
-                <div class="card">
-                    <h1>⚙️ Администрирование</h1>
-                    <div class="login-title">🔐 Вход в защищённую зону</div>
-                    ${errorMessage ? `<div class="error">❌ ${errorMessage}</div>` : ''}
-                    <input type="password" id="passwordInput" placeholder="Введите пароль" autocomplete="off">
-                    <button id="loginBtn">Войти</button>
-                    <div class="nav-buttons" style="margin-top: 20px;">
-                        <a href="results.html" class="nav-link">📊 Результаты</a>
-                        <a href="poll.html" class="nav-link">📝 Опрос</a>
-                    </div>
-                </div>
-            </div>
-        `;
+    async function attachAdminHandlers() {
+        document.getElementById('saveQuestionBtn')?.addEventListener('click', async () => {
+            const input = document.getElementById('questionInput');
+            const newQuestion = input.value.trim();
+            if (newQuestion) {
+                await setQuestion(newQuestion);
+                showToast(`✏️ Вопрос изменён на: "${newQuestion}"`);
+                render();
+            } else {
+                alert("Введите текст вопроса!");
+            }
+        });
+        
+        document.getElementById('addAnswerBtn')?.addEventListener('click', async () => {
+            const input = document.getElementById('newAnswerInput');
+            const newAnswer = input.value.trim();
+            if (newAnswer) {
+                const result = await addAnswer(newAnswer);
+                if (result.error) {
+                    alert(result.error);
+                } else {
+                    render();
+                    showToast(`✨ Добавлен вариант: "${newAnswer}"`);
+                }
+            } else {
+                alert("Введите вариант ответа!");
+            }
+        });
+        
+        document.getElementById('resetRatingBtn')?.addEventListener('click', async () => {
+            if (confirm("ВНИМАНИЕ! Все голоса будут сброшены до 1. Продолжить?")) {
+                await resetRating();
+                render();
+                showToast(`🔄 Рейтинг сброшен к 1`);
+            }
+        });
+        
+        document.getElementById('exportRatingBtn')?.addEventListener('click', () => {
+            exportRating();
+        });
+        
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            logout();
+        });
+        
+        document.getElementById('newAnswerInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('addAnswerBtn')?.click();
+        });
     }
+
+    window.removeAnswerItem = async function(answer) {
+        if (confirm(`Удалить вариант "${answer}"?`)) {
+            await removeAnswer(answer);
+            render();
+            showToast(`🗑️ Удалён вариант: "${answer}"`);
+        }
+    };
 
     async function render() {
         const app = document.getElementById("app");
@@ -295,48 +540,10 @@
         
         if (checkAuth()) {
             app.innerHTML = await renderAdminContent();
-            document.getElementById('saveQuestionBtn')?.addEventListener('click', async () => {
-                const input = document.getElementById('questionInput');
-                const newQuestion = input.value.trim();
-                if (newQuestion) {
-                    await setQuestion(newQuestion);
-                    showToast(`✏️ Вопрос изменён на: "${newQuestion}"`);
-                    render();
-                }
-            });
-            document.getElementById('addAnswerBtn')?.addEventListener('click', async () => {
-                const input = document.getElementById('newAnswerInput');
-                const newAnswer = input.value.trim();
-                if (newAnswer) {
-                    const result = await addAnswer(newAnswer);
-                    if (result.error) alert(result.error);
-                    else { render(); showToast(`✨ Добавлен вариант: "${newAnswer}"`); }
-                }
-            });
-            document.getElementById('resetRatingBtn')?.addEventListener('click', async () => {
-                if (confirm("Сбросить все голоса к 1?")) {
-                    await resetRating();
-                    render();
-                    showToast(`🔄 Рейтинг сброшен к 1`);
-                }
-            });
-            document.getElementById('logoutBtn')?.addEventListener('click', logout);
+            attachAdminHandlers();
         } else {
             app.innerHTML = renderLoginForm();
-            const loginBtn = document.getElementById("loginBtn");
-            const passwordInput = document.getElementById("passwordInput");
-            const tryLogin = () => {
-                if (passwordInput.value === ADMIN_PASSWORD) {
-                    setAuth(true);
-                    render();
-                    showToast("🔓 Доступ разрешён");
-                } else {
-                    renderLoginForm("Неверный пароль");
-                    render();
-                }
-            };
-            loginBtn?.addEventListener("click", tryLogin);
-            passwordInput?.addEventListener("keypress", (e) => { if (e.key === "Enter") tryLogin(); });
+            attachLoginHandler();
         }
     }
 
